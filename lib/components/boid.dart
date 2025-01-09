@@ -60,6 +60,13 @@ class Boid extends SpriteAnimationComponent
     // 境界をチェック
     _checkBounds();
 
+    // 向きを決定
+    if (velocity.x < 0 && scale.x > 0) {
+      flipHorizontally();
+    } else if (velocity.x > 0 && scale.x < 0) {
+      flipHorizontally();
+    }
+
     // 位置を更新
     position += velocity * dt;
   }

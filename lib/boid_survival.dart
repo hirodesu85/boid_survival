@@ -1,5 +1,6 @@
 import 'package:boid_survival/components/boid.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
 
 class BoidSurvivalGame extends FlameGame {
   // ボイドの調節不能パラメータ
@@ -27,5 +28,10 @@ class BoidSurvivalGame extends FlameGame {
         position: Vector2.random()..multiply(size),
       ));
     }
+  }
+
+  @override
+  Color backgroundColor() {
+    return const Color.fromARGB(255, 173, 223, 247);
   }
 }
