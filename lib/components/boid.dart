@@ -1,10 +1,10 @@
 import 'dart:math';
-
 import 'package:boid_survival/boid_survival.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 class Boid extends SpriteAnimationComponent
-    with HasGameReference<BoidSurvivalGame> {
+    with CollisionCallbacks, HasGameReference<BoidSurvivalGame> {
   Vector2 velocity = Vector2(
     Random().nextDouble() * 2 - 1,
     Random().nextDouble() * 2 - 1,
@@ -24,6 +24,7 @@ class Boid extends SpriteAnimationComponent
         stepTime: 0.24,
       ),
     );
+    add(CircleHitbox());
   }
 
   @override
@@ -48,17 +49,19 @@ class Boid extends SpriteAnimationComponent
     Vector2 separationForce =
         _calculateSeparation(neighbors) * separation.toDouble();
     Vector2 randomForce = _applyRandomForce() * random.toDouble();
+    Vector2 wallForce = _applyWallForce();
 
     // 全ての力を合算
-    velocity += alignmentForce + cohesionForce + separationForce + randomForce;
+    velocity += alignmentForce +
+        cohesionForce +
+        separationForce +
+        randomForce +
+        wallForce;
 
     // 速度を制限
     if (velocity.length > speed) {
       velocity = velocity.normalized() * speed.toDouble();
     }
-
-    // 境界をチェック
-    _checkBounds();
 
     // 向きを決定
     if (velocity.x < 0 && scale.x > 0) {
@@ -69,6 +72,24 @@ class Boid extends SpriteAnimationComponent
 
     // 位置を更新
     position += velocity * dt;
+
+    // 画面の境界を超えていないかチェック
+    _checkBounds();
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+
+    // 画面境界との衝突
+    if (other is ScreenHitbox) {
+      if (intersectionPoints.isNotEmpty) {
+        final collisionPoint = intersectionPoints.first;
+        final collisionNormal = (absoluteCenter - collisionPoint).normalized();
+        velocity = velocity.reflected(collisionNormal);
+        position += collisionNormal * 1.0;
+      }
+    }
   }
 
   List<Boid> _findNeighbors(int sight) {
@@ -123,19 +144,50 @@ class Boid extends SpriteAnimationComponent
     return Vector2(cos(angle), sin(angle)); // ランダムな方向ベクトル
   }
 
+  Vector2 _applyWallForce() {
+    final double screenWidth = game.size.x;
+    final double screenHeight = game.size.y;
+
+    Vector2 force = Vector2.zero();
+
+    // 左壁
+    if (position.x <= 100) {
+      force.x += 1 / (position.x + 1); // 壁に近づくほど強い力
+    }
+
+    // 右壁
+    if (position.x >= screenWidth - 100) {
+      force.x -= 1 / (screenWidth - position.x + 1);
+    }
+
+    // 上壁
+    if (position.y <= 100) {
+      force.y += 1 / (position.y + 1);
+    }
+
+    // 下壁
+    if (position.y >= screenHeight - 100) {
+      force.y -= 1 / (screenHeight - position.y + 1);
+    }
+
+    return force;
+  }
+
   void _checkBounds() {
     // 画面の境界を取得
     final double screenWidth = game.size.x;
     final double screenHeight = game.size.y;
 
-    // 左端または右端を超えそうになった場合
-    if (position.x <= 0 || position.x >= screenWidth) {
-      velocity.x = -velocity.x; // X方向の速度を反転
-    }
+    // 境界チェックの余裕（オフセット）を設定
+    const double boundaryOffset = 20.0;
 
-    // 上端または下端を超えそうになった場合
-    if (position.y <= 0 || position.y >= screenHeight) {
-      velocity.y = -velocity.y; // Y方向の速度を反転
+    if (position.x <= boundaryOffset ||
+        position.x >= screenWidth - boundaryOffset) {
+      velocity.x = -velocity.x;
+    }
+    if (position.y <= boundaryOffset ||
+        position.y >= screenHeight - boundaryOffset) {
+      velocity.y = -velocity.y;
     }
   }
 }

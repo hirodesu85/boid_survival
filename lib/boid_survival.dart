@@ -1,8 +1,9 @@
 import 'package:boid_survival/components/boid.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-class BoidSurvivalGame extends FlameGame {
+class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   // ボイドの調節不能パラメータ
   int boidCount = 10;
   int random = 1;
@@ -25,9 +26,12 @@ class BoidSurvivalGame extends FlameGame {
     for (int i = 0; i < boidCount; i++) {
       add(Boid(
         // ポジションはランダム
-        position: Vector2.random()..multiply(size),
+        position: Vector2.random()..multiply(size - Vector2.all(24)),
       ));
     }
+
+    // 衝突判定を有効化
+    add(ScreenHitbox());
   }
 
   @override
