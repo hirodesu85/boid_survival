@@ -1,0 +1,13 @@
+name: boid_survival
+description: Boid Survival Game
+version: 0.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+  flutter: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flame: ^1.23.0
