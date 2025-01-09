@@ -2,7 +2,17 @@ import 'package:boid_survival/components/boid.dart';
 import 'package:flame/game.dart';
 
 class BoidSurvivalGame extends FlameGame {
-  late Boid _boid;
+  // ボイドの調節不能パラメータ
+  int boidCount = 10;
+  int random = 1;
+
+  // ボイドの調節可能パラメータ
+  int separation = 100;
+  int alignment = 30;
+  int cohesion = 60;
+  int speed = 100;
+  int sight = 70;
+  int escape = 10;
 
   @override
   Future<void> onLoad() async {
@@ -10,7 +20,12 @@ class BoidSurvivalGame extends FlameGame {
       'boid.png',
     ]);
 
-    _boid = Boid(position: Vector2(0, 0));
-    world.add(_boid);
+    // ボイドの生成を行う
+    for (int i = 0; i < boidCount; i++) {
+      add(Boid(
+        // ポジションはランダム
+        position: Vector2.random()..multiply(size),
+      ));
+    }
   }
 }
