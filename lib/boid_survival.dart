@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   // ボイドの調節不能パラメータ
   int boidCount = 10;
-  int random = 1;
+  int random = 3;
 
   // ボイドの調節可能パラメータ
   int separation = 100;
@@ -15,7 +15,7 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   int cohesion = 60;
   int speed = 100;
   int sight = 70;
-  int escape = 10;
+  int escape = 50;
 
   @override
   Future<void> onLoad() async {

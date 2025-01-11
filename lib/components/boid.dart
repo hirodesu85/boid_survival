@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:boid_survival/boid_survival.dart';
+import 'package:boid_survival/components/enemies/enemy.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
@@ -37,6 +38,9 @@ class Boid extends SpriteAnimationComponent
     int separation = game.separation;
     int speed = game.speed;
     int sight = game.sight;
+    int escape = game.escape;
+
+    // BoidSurvivalGame から調節不能パラメータを取得
     int random = game.random;
 
     // 近くのボイドを探す
@@ -50,13 +54,15 @@ class Boid extends SpriteAnimationComponent
         _calculateSeparation(neighbors) * separation.toDouble();
     Vector2 randomForce = _applyRandomForce() * random.toDouble();
     Vector2 wallForce = _applyWallForce();
+    Vector2 escapeForce = _applyEscapeForce() * escape.toDouble();
 
     // 全ての力を合算
     velocity += alignmentForce +
         cohesionForce +
         separationForce +
         randomForce +
-        wallForce;
+        wallForce +
+        escapeForce;
 
     // 速度を制限
     if (velocity.length > speed) {
@@ -171,6 +177,31 @@ class Boid extends SpriteAnimationComponent
     }
 
     return force;
+  }
+
+  Vector2 _applyEscapeForce() {
+    // 近くの敵を探す
+    List<PositionComponent> enemies =
+        game.children.whereType<PositionComponent>().where((enemy) {
+      return enemy is Enemy &&
+          (enemy.position - position).length <= game.sight.toDouble();
+    }).toList();
+
+    if (enemies.isEmpty) {
+      return Vector2.zero();
+    }
+
+    // 敵から逃げる力を計算
+    Vector2 escapeForce = Vector2.zero();
+    for (var enemy in enemies) {
+      Vector2 diff = position - enemy.position;
+      double distance = diff.length;
+      if (distance > 0) {
+        escapeForce += diff / distance; // 距離に反比例する力
+      }
+    }
+
+    return escapeForce * 0.2; // 力のスケールを調整
   }
 
   void _checkBounds() {

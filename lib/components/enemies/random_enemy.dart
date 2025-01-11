@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'package:boid_survival/boid_survival.dart';
 import 'package:boid_survival/components/boid.dart';
+import 'package:boid_survival/components/enemies/enemy.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 class RandomEnemy extends SpriteAnimationComponent
-    with CollisionCallbacks, HasGameReference<BoidSurvivalGame> {
+    with Enemy, CollisionCallbacks, HasGameReference<BoidSurvivalGame> {
   Vector2 velocity = Vector2(
     Random().nextDouble() * 2 - 1,
     Random().nextDouble() * 2 - 1,
