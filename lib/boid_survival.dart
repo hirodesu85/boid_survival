@@ -17,6 +17,18 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   int sight = 70;
   int escape = 50;
 
+  // Wave関連
+  int currentWave = 1;
+  double waveDuration = 30.0; // 各Waveの長さ（秒）
+  double waveTimer = 30.0; // 現在のWaveの残り時間
+
+  // ゲーム状態
+  bool isGameOver = false;
+
+  // ゲームエリア
+  double headerHeight = 100;
+  late Rect gameArea;
+
   @override
   Future<void> onLoad() async {
     await images.loadAll([
@@ -24,24 +36,66 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
       'random_enemy.png',
     ]);
 
-    // ボイドの生成を行う
-    for (int i = 0; i < boidCount; i++) {
-      add(Boid(
-        position: Vector2.random()..multiply(size - Vector2.all(24)),
-      ));
-    }
+    // ゲームエリアを設定
+    gameArea = Rect.fromLTWH(0, headerHeight, size.x, size.y - headerHeight);
 
-    // 敵の生成を行う
-    add(RandomEnemy(
-      position: Vector2.random()..multiply(size - Vector2.all(32)),
-    ));
+    startWave();
 
     // 衝突判定を有効化
     add(ScreenHitbox());
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+
+    if (isGameOver) return;
+
+    // Waveタイマーを更新
+    waveTimer -= dt;
+
+    // Wave終了判定
+    if (waveTimer <= 0) {
+      if (boidCount > 0) {
+        // 次のWaveへ進む
+        currentWave++;
+        startWave();
+      } else {
+        endGame();
+      }
+    }
+  }
+
+  @override
   Color backgroundColor() {
     return const Color.fromARGB(255, 173, 223, 247);
+  }
+
+  void startWave() {
+    waveTimer = waveDuration;
+    spawnBoids();
+    spawnEnemies();
+  }
+
+  void endGame() {
+    isGameOver = true;
+    overlays.add('GameOver');
+  }
+
+  void spawnBoids() {
+    for (int i = 0; i < boidCount; i++) {
+      add(Boid(
+        position: Vector2.random()..multiply(size - Vector2.all(24)),
+      ));
+    }
+  }
+
+  void spawnEnemies() {
+    int enemyCount = currentWave;
+    for (int i = 0; i < enemyCount; i++) {
+      add(RandomEnemy(
+        position: Vector2.random()..multiply(size - Vector2.all(32)),
+      ));
+    }
   }
 }
