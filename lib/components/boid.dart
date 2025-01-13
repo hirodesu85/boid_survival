@@ -34,12 +34,12 @@ class Boid extends SpriteAnimationComponent
     super.update(dt);
 
     // BoidSurvivalGame から調節可能パラメータを取得
-    int alignment = game.alignment;
-    int cohesion = game.cohesion;
-    int separation = game.separation;
-    int speed = game.speed;
-    int sight = game.sight;
-    int escape = game.escape;
+    int alignment = game.parameters['alignment']!;
+    int cohesion = game.parameters['cohesion']!;
+    int separation = game.parameters['separation']!;
+    int speed = game.parameters['speed']!;
+    int sight = game.parameters['sight']!;
+    int escape = game.parameters['escape']!;
 
     // BoidSurvivalGame から調節不能パラメータを取得
     int random = game.random;
@@ -55,7 +55,7 @@ class Boid extends SpriteAnimationComponent
         _calculateSeparation(neighbors) * separation.toDouble();
     Vector2 randomForce = _applyRandomForce() * random.toDouble();
     Vector2 wallForce = _applyWallForce();
-    Vector2 escapeForce = _applyEscapeForce() * escape.toDouble();
+    Vector2 escapeForce = _applyEscapeForce(sight) * escape.toDouble();
 
     // 全ての力を合算
     velocity += alignmentForce +
@@ -180,12 +180,12 @@ class Boid extends SpriteAnimationComponent
     return force;
   }
 
-  Vector2 _applyEscapeForce() {
+  Vector2 _applyEscapeForce(int sight) {
     // 近くの敵を探す
     List<PositionComponent> enemies =
         game.children.whereType<PositionComponent>().where((enemy) {
       return enemy is Enemy &&
-          (enemy.position - position).length <= game.sight.toDouble();
+          (enemy.position - position).length <= sight.toDouble();
     }).toList();
 
     if (enemies.isEmpty) {

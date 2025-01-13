@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class GameOverOverlay extends StatelessWidget {
   final VoidCallback onRestart;
+  final int result;
 
   const GameOverOverlay({
     Key? key,
     required this.onRestart,
+    required this.result,
   }) : super(key: key);
 
   @override
@@ -21,6 +23,15 @@ class GameOverOverlay extends StatelessWidget {
               'Game Over',
               style: TextStyle(
                 fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Result: $result Waves',
+              style: const TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
