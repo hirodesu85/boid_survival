@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:boid_survival/components/boid.dart';
+import 'package:boid_survival/components/enemies/enemy.dart';
 import 'package:boid_survival/components/enemies/random_enemy.dart';
+import 'package:boid_survival/components/enemies/tracking_enemy.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +55,7 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
     await images.loadAll([
       'boid.png',
       'random_enemy.png',
+      'tracking_enemy.png',
     ]);
 
     // ゲームエリアを設定
@@ -87,7 +90,7 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
 
         // ボイドと敵を削除
         children.whereType<Boid>().toList().forEach(remove);
-        children.whereType<RandomEnemy>().toList().forEach(remove);
+        children.where((child) => child is Enemy).toList().forEach(remove);
 
         // パラメータ強化画面を表示
         startParameterAdjustment(); // パラメータ強化を開始
@@ -129,7 +132,7 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
 
     // ボイドと敵を削除
     children.whereType<Boid>().toList().forEach(remove);
-    children.whereType<RandomEnemy>().toList().forEach(remove);
+    children.where((child) => child is Enemy).toList().forEach(remove);
 
     // パラメータをリセット
     parameters = {
@@ -165,7 +168,7 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
 
   void spawnEnemies() {
     int enemyCount = currentWave;
-    for (int i = 0; i < enemyCount * 5; i++) {
+    for (int i = 1; i <= enemyCount; i++) {
       Vector2 position;
       do {
         position = Vector2(
@@ -174,12 +177,17 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
         );
       } while (_isTooCloseToBoids(position)); // ボイドとの距離をチェック
 
-      add(RandomEnemy(position: position));
+      if (i % 7 == 0) {
+        add(TrackingEnemy(position: position));
+      } else {
+        add(RandomEnemy(position: position));
+        add(RandomEnemy(position: position));
+      }
     }
   }
 
   bool _isTooCloseToEnemies(Vector2 position) {
-    return children.whereType<RandomEnemy>().any((enemy) {
+    return children.whereType<Enemy>().any((enemy) {
       return (enemy.position - position).length < 100; // 100ピクセル以上離す
     });
   }

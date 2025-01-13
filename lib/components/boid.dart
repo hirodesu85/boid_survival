@@ -61,7 +61,7 @@ class Boid extends SpriteAnimationComponent
         _normalizeForce(_applyEscapeForce(sight), 1.0) * escape.toDouble();
     Vector2 randomForce =
         _normalizeForce(_applyRandomForce(), 1.0) * random.toDouble();
-    Vector2 wallForce = _normalizeForce(_applyWallForce(), 1.0) * 3.0;
+    Vector2 wallForce = _normalizeForce(_applyWallForce(), 1.0) * 70.0;
 
     // 全ての力を合算
     velocity += alignmentForce +
