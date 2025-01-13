@@ -15,3 +15,9 @@ dependencies:
 flutter:
   assets:
     - assets/images/
+    - assets/images/button/separation.png
+    - assets/images/button/alignment.png
+    - assets/images/button/cohesion.png
+    - assets/images/button/speed.png
+    - assets/images/button/sight.png
+    - assets/images/button/escape.png

@@ -6,7 +6,6 @@ class ParameterAdjustmentOverlay extends StatefulWidget {
   final int nextWave;
 
   final Function(String) onParameterIncrease;
-  // final VoidCallback onConfirm;
 
   const ParameterAdjustmentOverlay({
     Key? key,
@@ -14,7 +13,6 @@ class ParameterAdjustmentOverlay extends StatefulWidget {
     required this.pointsRemaining,
     required this.nextWave,
     required this.onParameterIncrease,
-    // required this.onConfirm,
   }) : super(key: key);
 
   @override
@@ -56,7 +54,7 @@ class _ParameterAdjustmentOverlayState
             ),
             Text(
               '次回Wave: ${widget.nextWave}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -71,6 +69,7 @@ class _ParameterAdjustmentOverlayState
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 3, // 3列
@@ -84,16 +83,55 @@ class _ParameterAdjustmentOverlayState
                       ? () => widget.onParameterIncrease(entry.key)
                       : null, // ポイントが残っていない場合は無効化
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    backgroundColor: Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(label), // パラメータ名
-                      Text('Lv: ${entry.value}'), // 現在のレベル
-                    ],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8), // 角丸を設定
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // 背景画像
+                        Image.asset(
+                          'assets/images/button/${entry.key}.png',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                        // 暗い背景フィルター
+                        Container(
+                          color: Colors.white.withAlpha(200),
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                        // ラベルとレベル表示
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              label, // パラメータ名
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                              ),
+                            ),
+                            Text(
+                              'Lv: ${entry.value}', // 現在のレベル
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 23,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }).toList(),
