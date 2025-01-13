@@ -22,11 +22,15 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   double waveDuration = 30.0; // 各Waveの長さ（秒）
   double waveTimer = 30.0; // 現在のWaveの残り時間
 
+  // ValueNotifier
+  final ValueNotifier<int> waveNotifier = ValueNotifier(1); // 初期Waveは1
+  final ValueNotifier<double> timerNotifier = ValueNotifier(30.0); // 初期残り時間は30秒
+
   // ゲーム状態
   bool isGameOver = false;
 
   // ゲームエリア
-  double headerHeight = 100;
+  double headerHeight = 120;
   late Rect gameArea;
 
   @override
@@ -53,12 +57,14 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
 
     // Waveタイマーを更新
     waveTimer -= dt;
+    timerNotifier.value = waveTimer;
 
     // Wave終了判定
     if (waveTimer <= 0) {
       if (boidCount > 0) {
         // 次のWaveへ進む
         currentWave++;
+        waveNotifier.value = currentWave;
         startWave();
       } else {
         endGame();
@@ -80,6 +86,7 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   void endGame() {
     isGameOver = true;
     overlays.add('GameOver');
+    overlays.remove('Header');
   }
 
   void spawnBoids() {
