@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boid_survival/components/boid.dart';
 import 'package:boid_survival/components/enemies/random_enemy.dart';
 import 'package:flame/collisions.dart';
@@ -6,36 +8,35 @@ import 'package:flutter/material.dart';
 
 class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   // ボイドの調節不能パラメータ
-  int boidCount = 10;
   int random = 3;
 
   // ボイドの調節可能パラメータ
   int pointsRemaining = 10;
   Map<String, int> parameters = {
-    'separation': 100,
-    'alignment': 30,
-    'cohesion': 60,
-    'speed': 100,
-    'sight': 70,
-    'escape': 50,
+    'separation': 1,
+    'alignment': 1,
+    'cohesion': 1,
+    'speed': 1,
+    'sight': 1,
+    'escape': 1,
   };
 
   // Wave関連
   int currentWave = 1;
-  double waveDuration = 10.0; // 各Waveの長さ（秒）
-  double waveTimer = 10.0; // 現在のWaveの残り時間
+  double waveDuration = 15.0; // 各Waveの長さ（秒）
+  double waveTimer = 15.0; // 現在のWaveの残り時間
 
   // ValueNotifier
   final ValueNotifier<int> waveNotifier = ValueNotifier(1); // 初期Waveは1
-  final ValueNotifier<double> timerNotifier = ValueNotifier(10.0); // 初期残り時間は20秒
+  final ValueNotifier<double> timerNotifier = ValueNotifier(15.0); // 初期残り時間は20秒
   final ValueNotifier<Map<String, int>> parametersNotifier =
       ValueNotifier<Map<String, int>>({
-    'separation': 100,
-    'alignment': 30,
-    'cohesion': 60,
-    'speed': 100,
-    'sight': 70,
-    'escape': 50,
+    'separation': 1,
+    'alignment': 1,
+    'cohesion': 1,
+    'speed': 1,
+    'sight': 1,
+    'escape': 1,
   });
   final ValueNotifier<int> pointsNotifier = ValueNotifier(10);
 
@@ -72,13 +73,14 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
     waveTimer -= dt;
     timerNotifier.value = waveTimer;
 
-    // Wave終了判定
-    if (boidCount == 0) {
+    // ゲームオーバー判定
+    if (children.whereType<Boid>().isEmpty) {
       endGame();
+      return;
     }
 
     if (waveTimer <= 0) {
-      if (boidCount > 0) {
+      if (children.whereType<Boid>().isNotEmpty) {
         // 次のWaveへ進む
         currentWave++;
         waveNotifier.value = currentWave;
@@ -131,12 +133,12 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
 
     // パラメータをリセット
     parameters = {
-      'separation': 100,
-      'alignment': 30,
-      'cohesion': 60,
-      'speed': 100,
-      'sight': 70,
-      'escape': 50,
+      'separation': 1,
+      'alignment': 1,
+      'cohesion': 1,
+      'speed': 1,
+      'sight': 1,
+      'escape': 1,
     };
 
     // ポイントをリセット
@@ -148,21 +150,44 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   }
 
   void spawnBoids() {
-    boidCount = 10;
-    for (int i = 0; i < boidCount; i++) {
-      add(Boid(
-        position: Vector2.random()..multiply(size - Vector2.all(24)),
-      ));
+    for (int i = 0; i < 10; i++) {
+      Vector2 position;
+      do {
+        position = Vector2(
+          gameArea.left + Random().nextDouble() * gameArea.width,
+          gameArea.top + Random().nextDouble() * gameArea.height,
+        );
+      } while (_isTooCloseToEnemies(position)); // 敵との距離をチェック
+
+      add(Boid(position: position));
     }
   }
 
   void spawnEnemies() {
     int enemyCount = currentWave;
-    for (int i = 0; i < enemyCount; i++) {
-      add(RandomEnemy(
-        position: Vector2.random()..multiply(size - Vector2.all(32)),
-      ));
+    for (int i = 0; i < enemyCount * 5; i++) {
+      Vector2 position;
+      do {
+        position = Vector2(
+          gameArea.left + Random().nextDouble() * gameArea.width,
+          gameArea.top + Random().nextDouble() * gameArea.height,
+        );
+      } while (_isTooCloseToBoids(position)); // ボイドとの距離をチェック
+
+      add(RandomEnemy(position: position));
     }
+  }
+
+  bool _isTooCloseToEnemies(Vector2 position) {
+    return children.whereType<RandomEnemy>().any((enemy) {
+      return (enemy.position - position).length < 100; // 100ピクセル以上離す
+    });
+  }
+
+  bool _isTooCloseToBoids(Vector2 position) {
+    return children.whereType<Boid>().any((boid) {
+      return (boid.position - position).length < 50; // 50ピクセル以上離す
+    });
   }
 
   void startParameterAdjustment() {

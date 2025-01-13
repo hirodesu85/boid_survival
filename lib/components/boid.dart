@@ -37,8 +37,8 @@ class Boid extends SpriteAnimationComponent
     int alignment = game.parameters['alignment']!;
     int cohesion = game.parameters['cohesion']!;
     int separation = game.parameters['separation']!;
-    int speed = game.parameters['speed']!;
-    int sight = game.parameters['sight']!;
+    int speed = game.parameters['speed']! * 5;
+    int sight = game.parameters['sight']! * 5;
     int escape = game.parameters['escape']!;
 
     // BoidSurvivalGame から調節不能パラメータを取得
@@ -49,13 +49,19 @@ class Boid extends SpriteAnimationComponent
 
     // 各種力を計算
     Vector2 alignmentForce =
-        _calculateAlignment(neighbors) * alignment.toDouble();
-    Vector2 cohesionForce = _calculateCohesion(neighbors) * cohesion.toDouble();
+        _normalizeForce(_calculateAlignment(neighbors), 1.0) *
+            alignment.toDouble();
+    Vector2 cohesionForce =
+        _normalizeForce(_calculateCohesion(neighbors), 1.0) *
+            cohesion.toDouble();
     Vector2 separationForce =
-        _calculateSeparation(neighbors) * separation.toDouble();
-    Vector2 randomForce = _applyRandomForce() * random.toDouble();
-    Vector2 wallForce = _applyWallForce();
-    Vector2 escapeForce = _applyEscapeForce(sight) * escape.toDouble();
+        _normalizeForce(_calculateSeparation(neighbors), 1.0) *
+            separation.toDouble();
+    Vector2 escapeForce =
+        _normalizeForce(_applyEscapeForce(sight), 1.0) * escape.toDouble();
+    Vector2 randomForce =
+        _normalizeForce(_applyRandomForce(), 1.0) * random.toDouble();
+    Vector2 wallForce = _normalizeForce(_applyWallForce(), 1.0) * 3.0;
 
     // 全ての力を合算
     velocity += alignmentForce +
@@ -115,7 +121,7 @@ class Boid extends SpriteAnimationComponent
     }
     averageVelocity /= neighbors.length.toDouble();
 
-    return (averageVelocity - velocity) * 0.05;
+    return (averageVelocity - velocity);
   }
 
   Vector2 _calculateCohesion(List<Boid> neighbors) {
@@ -127,7 +133,7 @@ class Boid extends SpriteAnimationComponent
     }
     averagePosition /= neighbors.length.toDouble();
 
-    return (averagePosition - position) * 0.01;
+    return (averagePosition - position);
   }
 
   Vector2 _calculateSeparation(List<Boid> neighbors) {
@@ -141,7 +147,7 @@ class Boid extends SpriteAnimationComponent
       }
     }
 
-    return separationForce * 0.1;
+    return separationForce;
   }
 
   Vector2 _applyRandomForce() {
@@ -152,29 +158,37 @@ class Boid extends SpriteAnimationComponent
   }
 
   Vector2 _applyWallForce() {
-    final double screenWidth = game.size.x;
-    final double screenHeight = game.size.y;
+    // ゲームエリアを取得
+    final Rect gameArea = game.gameArea;
 
+    // 壁からの力を初期化
     Vector2 force = Vector2.zero();
 
+    // 壁からの距離に応じて力を計算
+    const double wallEffectRange = 100.0; // 力が有効になる距離
+
     // 左壁
-    if (position.x <= 100) {
-      force.x += 1 / (position.x + 1); // 壁に近づくほど強い力
+    if (position.x - gameArea.left <= wallEffectRange) {
+      double distance = max(1.0, position.x - gameArea.left); // 距離を1以上に制限
+      force.x += 1 / distance; // 距離に反比例する力
     }
 
     // 右壁
-    if (position.x >= screenWidth - 100) {
-      force.x -= 1 / (screenWidth - position.x + 1);
+    if (gameArea.right - position.x <= wallEffectRange) {
+      double distance = max(1.0, gameArea.right - position.x);
+      force.x -= 1 / distance;
     }
 
     // 上壁
-    if (position.y <= 100) {
-      force.y += 1 / (position.y + 1);
+    if (position.y - gameArea.top <= wallEffectRange) {
+      double distance = max(1.0, position.y - gameArea.top);
+      force.y += 1 / distance;
     }
 
     // 下壁
-    if (position.y >= screenHeight - 100) {
-      force.y -= 1 / (screenHeight - position.y + 1);
+    if (gameArea.bottom - position.y <= wallEffectRange) {
+      double distance = max(1.0, gameArea.bottom - position.y);
+      force.y -= 1 / distance;
     }
 
     return force;
@@ -202,7 +216,7 @@ class Boid extends SpriteAnimationComponent
       }
     }
 
-    return escapeForce * 0.2; // 力のスケールを調整
+    return escapeForce; // 力のスケールを調整
   }
 
   void _checkBounds() {
@@ -225,5 +239,12 @@ class Boid extends SpriteAnimationComponent
       position.y = gameArea.bottom;
       velocity.y = -velocity.y.abs(); // 上方向に反転
     }
+  }
+
+  Vector2 _normalizeForce(Vector2 force, double targetLength) {
+    if (force.length > targetLength) {
+      return force.normalized() * targetLength;
+    }
+    return force;
   }
 }

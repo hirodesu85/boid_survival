@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 class ParameterAdjustmentOverlay extends StatefulWidget {
   final Map<String, int> parameters;
   final int pointsRemaining;
+  final int nextWave;
+
   final Function(String) onParameterIncrease;
-  final VoidCallback onConfirm;
+  // final VoidCallback onConfirm;
 
   const ParameterAdjustmentOverlay({
     Key? key,
     required this.parameters,
     required this.pointsRemaining,
+    required this.nextWave,
     required this.onParameterIncrease,
-    required this.onConfirm,
+    // required this.onConfirm,
   }) : super(key: key);
 
   @override
@@ -51,12 +54,21 @@ class _ParameterAdjustmentOverlayState
                 color: Colors.white,
               ),
             ),
+            Text(
+              '次回Wave: ${widget.nextWave}',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             const SizedBox(height: 8),
             Text(
               '残り ${widget.pointsRemaining} ポイント',
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
             GridView.count(
