@@ -49,13 +49,19 @@ class Boid extends SpriteAnimationComponent
 
     // 各種力を計算
     Vector2 alignmentForce =
-        _calculateAlignment(neighbors) * alignment.toDouble();
-    Vector2 cohesionForce = _calculateCohesion(neighbors) * cohesion.toDouble();
+        _normalizeForce(_calculateAlignment(neighbors), 1.0) *
+            alignment.toDouble();
+    Vector2 cohesionForce =
+        _normalizeForce(_calculateCohesion(neighbors), 1.0) *
+            cohesion.toDouble();
     Vector2 separationForce =
-        _calculateSeparation(neighbors) * separation.toDouble();
-    Vector2 randomForce = _applyRandomForce() * random.toDouble();
-    Vector2 wallForce = _applyWallForce();
-    Vector2 escapeForce = _applyEscapeForce(sight) * escape.toDouble();
+        _normalizeForce(_calculateSeparation(neighbors), 1.0) *
+            separation.toDouble();
+    Vector2 escapeForce =
+        _normalizeForce(_applyEscapeForce(sight), 1.0) * escape.toDouble();
+    Vector2 randomForce =
+        _normalizeForce(_applyRandomForce(), 1.0) * random.toDouble();
+    Vector2 wallForce = _normalizeForce(_applyWallForce(), 1.0);
 
     // 全ての力を合算
     velocity += alignmentForce +
@@ -115,7 +121,7 @@ class Boid extends SpriteAnimationComponent
     }
     averageVelocity /= neighbors.length.toDouble();
 
-    return (averageVelocity - velocity) * 0.05;
+    return (averageVelocity - velocity);
   }
 
   Vector2 _calculateCohesion(List<Boid> neighbors) {
@@ -127,7 +133,7 @@ class Boid extends SpriteAnimationComponent
     }
     averagePosition /= neighbors.length.toDouble();
 
-    return (averagePosition - position) * 0.01;
+    return (averagePosition - position);
   }
 
   Vector2 _calculateSeparation(List<Boid> neighbors) {
@@ -141,7 +147,7 @@ class Boid extends SpriteAnimationComponent
       }
     }
 
-    return separationForce * 0.1;
+    return separationForce;
   }
 
   Vector2 _applyRandomForce() {
@@ -202,7 +208,7 @@ class Boid extends SpriteAnimationComponent
       }
     }
 
-    return escapeForce * 0.2; // 力のスケールを調整
+    return escapeForce; // 力のスケールを調整
   }
 
   void _checkBounds() {
@@ -225,5 +231,12 @@ class Boid extends SpriteAnimationComponent
       position.y = gameArea.bottom;
       velocity.y = -velocity.y.abs(); // 上方向に反転
     }
+  }
+
+  Vector2 _normalizeForce(Vector2 force, double targetLength) {
+    if (force.length > targetLength) {
+      return force.normalized() * targetLength;
+    }
+    return force;
   }
 }

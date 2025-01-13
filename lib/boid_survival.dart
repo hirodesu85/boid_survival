@@ -12,12 +12,12 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   // ボイドの調節可能パラメータ
   int pointsRemaining = 10;
   Map<String, int> parameters = {
-    'separation': 100,
-    'alignment': 30,
-    'cohesion': 60,
-    'speed': 100,
-    'sight': 70,
-    'escape': 50,
+    'separation': 1,
+    'alignment': 1,
+    'cohesion': 1,
+    'speed': 1,
+    'sight': 1,
+    'escape': 1,
   };
 
   // Wave関連
@@ -30,12 +30,12 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
   final ValueNotifier<double> timerNotifier = ValueNotifier(10.0); // 初期残り時間は20秒
   final ValueNotifier<Map<String, int>> parametersNotifier =
       ValueNotifier<Map<String, int>>({
-    'separation': 100,
-    'alignment': 30,
-    'cohesion': 60,
-    'speed': 100,
-    'sight': 70,
-    'escape': 50,
+    'separation': 1,
+    'alignment': 1,
+    'cohesion': 1,
+    'speed': 1,
+    'sight': 1,
+    'escape': 1,
   });
   final ValueNotifier<int> pointsNotifier = ValueNotifier(10);
 
