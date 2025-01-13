@@ -19,12 +19,12 @@ class BoidSurvivalGame extends FlameGame with HasCollisionDetection {
 
   // Wave関連
   int currentWave = 1;
-  double waveDuration = 30.0; // 各Waveの長さ（秒）
-  double waveTimer = 30.0; // 現在のWaveの残り時間
+  double waveDuration = 20.0; // 各Waveの長さ（秒）
+  double waveTimer = 20.0; // 現在のWaveの残り時間
 
   // ValueNotifier
   final ValueNotifier<int> waveNotifier = ValueNotifier(1); // 初期Waveは1
-  final ValueNotifier<double> timerNotifier = ValueNotifier(30.0); // 初期残り時間は30秒
+  final ValueNotifier<double> timerNotifier = ValueNotifier(20.0); // 初期残り時間は30秒
 
   // ゲーム状態
   bool isGameOver = false;

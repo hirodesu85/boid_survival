@@ -1,3 +1,4 @@
+import 'package:boid_survival/overlays/game_over.dart';
 import 'package:boid_survival/overlays/header.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,14 @@ void main() {
                   );
                 },
               );
+            },
+          );
+        },
+        'GameOver': (context, game) {
+          return GameOverOverlay(
+            onRestart: () {
+              game.overlays.remove('GameOver'); // オーバーレイを削除
+              game.overlays.add('Header'); // ヘッダーを再追加
             },
           );
         },
