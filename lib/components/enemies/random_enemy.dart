@@ -74,7 +74,6 @@ class RandomEnemy extends SpriteAnimationComponent
     // 衝突したボイドを削除する
     if (other is Boid) {
       game.remove(other);
-      game.boidCount--;
     }
   }
 
