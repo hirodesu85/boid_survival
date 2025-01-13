@@ -37,8 +37,8 @@ class Boid extends SpriteAnimationComponent
     int alignment = game.parameters['alignment']!;
     int cohesion = game.parameters['cohesion']!;
     int separation = game.parameters['separation']!;
-    int speed = game.parameters['speed']! * 2;
-    int sight = game.parameters['sight']! * 2;
+    int speed = game.parameters['speed']! * 3;
+    int sight = game.parameters['sight']! * 3;
     int escape = game.parameters['escape']!;
 
     // BoidSurvivalGame から調節不能パラメータを取得

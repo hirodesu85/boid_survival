@@ -45,9 +45,9 @@ void main() {
                 builder: (context, pointsRemaining, child) {
                   return ParameterAdjustmentOverlay(
                     parameters: parameters,
+                    nextWave: game.currentWave,
                     pointsRemaining: pointsRemaining,
                     onParameterIncrease: game.increaseParameter,
-                    onConfirm: game.startWave,
                   );
                 },
               );
