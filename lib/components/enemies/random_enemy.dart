@@ -8,11 +8,8 @@ import 'package:flutter/material.dart';
 
 class RandomEnemy extends SpriteAnimationComponent
     with Enemy, CollisionCallbacks, HasGameReference<BoidSurvivalGame> {
-  Vector2 velocity = Vector2(
-    Random().nextDouble() * 2 - 1,
-    Random().nextDouble() * 2 - 1,
-  );
-  double speed = 150;
+  Vector2 velocity = Vector2.zero();
+  double speed = 50;
 
   RandomEnemy({
     required super.position,
@@ -37,14 +34,13 @@ class RandomEnemy extends SpriteAnimationComponent
 
     // ランダムな速度を生成
     velocity += Vector2(
-      Random().nextDouble() * 2 - 1,
-      Random().nextDouble() * 2 - 1,
-    );
+          Random().nextDouble() * 2 - 1,
+          Random().nextDouble() * 2 - 1,
+        ).normalized() *
+        (speed / 4);
 
-    // 速度を制限
-    if (velocity.length > speed) {
-      velocity = velocity.normalized() * speed.toDouble();
-    }
+    // 速度調整
+    velocity = velocity.normalized() * speed;
 
     // 向きを決定
     if (velocity.x < 0 && scale.x > 0) {
