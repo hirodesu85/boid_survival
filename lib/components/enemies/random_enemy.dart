@@ -4,6 +4,7 @@ import 'package:boid_survival/components/boid.dart';
 import 'package:boid_survival/components/enemies/enemy.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 
 class RandomEnemy extends SpriteAnimationComponent
     with Enemy, CollisionCallbacks, HasGameReference<BoidSurvivalGame> {
@@ -82,20 +83,24 @@ class RandomEnemy extends SpriteAnimationComponent
   }
 
   void _checkBounds() {
-    // 画面の境界を取得
-    final double screenWidth = game.size.x;
-    final double screenHeight = game.size.y;
+    // ゲームエリアを取得
+    final Rect gameArea = game.gameArea;
 
-    // 境界チェックの余裕（オフセット）を設定
-    const double boundaryOffset = 20.0;
-
-    if (position.x <= boundaryOffset ||
-        position.x >= screenWidth - boundaryOffset) {
-      velocity.x = -velocity.x;
+    // 境界チェックと位置補正
+    if (position.x < gameArea.left) {
+      position.x = gameArea.left;
+      velocity.x = velocity.x.abs(); // 右方向に反転
+    } else if (position.x > gameArea.right) {
+      position.x = gameArea.right;
+      velocity.x = -velocity.x.abs(); // 左方向に反転
     }
-    if (position.y <= boundaryOffset ||
-        position.y >= screenHeight - boundaryOffset) {
-      velocity.y = -velocity.y;
+
+    if (position.y < gameArea.top) {
+      position.y = gameArea.top;
+      velocity.y = velocity.y.abs(); // 下方向に反転
+    } else if (position.y > gameArea.bottom) {
+      position.y = gameArea.bottom;
+      velocity.y = -velocity.y.abs(); // 上方向に反転
     }
   }
 }
