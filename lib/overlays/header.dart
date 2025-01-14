@@ -47,7 +47,7 @@ class HeaderOverlay extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: 70, // 固定幅を設定
+                      width: 80, // 固定幅を設定
                       child: Text(
                         '${timeLeft.toStringAsFixed(1)}s',
                         style: const TextStyle(

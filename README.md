@@ -1,16 +1,17 @@
 # boid_survival
 
-A new Flutter project.
+## 🎮 Try it out!
 
-## Getting Started
+You can access and play the application directly from the following link:
 
-This project is a starting point for a Flutter application.
+👉 [**Play Here**](https://hirodesu85.github.io/boid_survival/) 👈
 
-A few resources to get you started if this is your first Flutter project:
+Feel free to explore and enjoy!
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📜 Game Rules
+
+The objective of the game is to **adjust the Boid model parameters** to create a flock of Boids that can survive for as many waves as possible.
+
+Can you build the ultimate flock of Boids? 🐦✨
