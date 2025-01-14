@@ -30107,7 +30107,7 @@ ai(a){var s=null,r=A.b7(204,B.k.gm()>>>16&255,B.k.gm()>>>8&255,B.k.gm()&255)
 return A.a4d(A.n4(A.Ga(A.a([B.Fu,B.f8,A.lO("Result: "+this.d+" Waves",B.cd,s),B.f8,A.ZA(s,A.n4(B.Fv,s,A.YD(A.rW(8),A.a([new A.iY(0,B.fx,A.b7(51,B.k.gm()>>>16&255,B.k.gm()>>>8&255,B.k.gm()&255),B.zm,4)],t.xq),B.i),s,s,B.vd,s),!1,s,s,s,s,s,s,this.c,s,s,s)],t.F),B.aH,B.eA),r,s,s,s,B.hf,s),s,s)}}
 A.kZ.prototype={
 ai(a){var s=null,r=A.YD(s,s,A.b7(180,B.k.gm()>>>16&255,B.k.gm()>>>8&255,B.k.gm()&255)),q=t.F
-return A.a_o(s,A.n4(A.Ga(A.a([A.a_J(A.a([A.lO("Wave: "+this.c,B.cd,s),A.a_J(A.a([B.Ft,new A.jV(70,s,A.lO(B.c.F(this.d,1)+"s",B.cd,B.di),s)],q),B.aH)],q),B.mr)],q),B.mp,B.d3),s,r,s,s,B.vc,s),110,0,0,0)}}
+return A.a_o(s,A.n4(A.Ga(A.a([A.a_J(A.a([A.lO("Wave: "+this.c,B.cd,s),A.a_J(A.a([B.Ft,new A.jV(80,s,A.lO(B.c.F(this.d,1)+"s",B.cd,B.di),s)],q),B.aH)],q),B.mr)],q),B.mp,B.d3),s,r,s,s,B.vc,s),110,0,0,0)}}
 A.jt.prototype={
 bp(){var s=t.N
 return new A.B2(A.al(["separation","\u5206\u96e2","alignment","\u6574\u5217","cohesion","\u7d50\u675f","speed","\u901f\u5ea6","sight","\u8996\u91ce","escape","\u56de\u907f"],s,s))},
