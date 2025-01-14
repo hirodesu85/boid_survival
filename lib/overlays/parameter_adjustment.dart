@@ -34,6 +34,10 @@ class _ParameterAdjustmentOverlayState
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 600 ? 6 : 3; // 大画面なら6列、小画面なら3列
+    final buttonSize = screenWidth / crossAxisCount - 16; // ボタンサイズを調整
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -70,12 +74,16 @@ class _ParameterAdjustmentOverlayState
               ),
             ),
             const SizedBox(height: 16),
-            GridView.count(
+            GridView.builder(
               shrinkWrap: true,
-              crossAxisCount: 3, // 3列
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              children: widget.parameters.entries.map((entry) {
+              itemCount: widget.parameters.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount, // 列数を動的に変更
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              itemBuilder: (context, index) {
+                final entry = widget.parameters.entries.toList()[index];
                 final String label =
                     parameterLabels[entry.key] ?? entry.key; // 日本語ラベル
                 return ElevatedButton(
@@ -99,14 +107,14 @@ class _ParameterAdjustmentOverlayState
                         Image.asset(
                           'assets/images/button/${entry.key}.png',
                           fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
+                          width: buttonSize,
+                          height: buttonSize,
                         ),
-                        // 暗い背景フィルター
+                        // 白い背景フィルター
                         Container(
                           color: Colors.white.withAlpha(200),
-                          width: double.infinity,
-                          height: double.infinity,
+                          width: buttonSize,
+                          height: buttonSize,
                         ),
                         // ラベルとレベル表示
                         Column(
@@ -134,7 +142,7 @@ class _ParameterAdjustmentOverlayState
                     ),
                   ),
                 );
-              }).toList(),
+              },
             ),
           ],
         ),
